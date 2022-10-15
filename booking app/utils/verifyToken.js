@@ -7,7 +7,7 @@ export const verifyToken=(req,res,next)=>{
     if(!token){
         return next(createError(402,"you are not authenticated"))
     }
-    jwt.verify(token,"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" , (err,user)=>{
+    jwt.verify(token,"8hEnPGeoBqGUT6zksxt4G95gW+uMdzwe7EVaRnp0xRI=" , (err,user)=>{
         if(err) return next(createError(403 ,"token is not valid"));
         req.user=user;
         next();

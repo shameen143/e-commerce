@@ -1,6 +1,6 @@
 import { faBed, faCalendarDay, faCar, faPerson, faPlane, faTaxi } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
+import React, { useContext } from "react";
 import { useState } from "react";
 import './header.css';
 import { DateRange } from "react-date-range";
@@ -8,11 +8,14 @@ import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import { format } from 'date-fns';
 import { useNavigate } from "react-router-dom";
+import { SearchContext } from "../Context/SearchContext";
+
+import  {AuthContext}  from "../Context/AuthContext";
 
 const Header = ({type}) => {
     const[destination,setDestination]=useState("")
-    const [openDate, setOpenDate] = useState(false)
-    const [date, setDate] = useState([
+    const [openDates, setOpenDates] = useState(false)
+    const [dates, setDates] = useState([
         {
             startDate: new Date(),
             endDate: new Date(),
@@ -25,6 +28,10 @@ const Header = ({type}) => {
         children: 0,
         room: 1,
     });
+
+    const {user} = useContext(AuthContext);
+
+
     const navigate=useNavigate();
     const handleOption = (name, operation) => {
         setOptions(prev => {
@@ -34,8 +41,12 @@ const Header = ({type}) => {
 
         });
     };
+
+    const {dispatch}=useContext(SearchContext)
+
     const handleSearch=()=>{
-        navigate('/hotels' , {state:{destination,date,options}});
+        dispatch({type:"NEW_SEARCH",payload:{destination,dates,options}})
+        navigate('/hotels' , {state:{destination,dates,options}});
 
     };
     return (
@@ -69,7 +80,7 @@ const Header = ({type}) => {
                 <p className="headerDesc">
                     Get Rewarded for your travels unlock instant saving of 10% or more with a free lamabooking account
                 </p>
-                <button className="headerBtn">Sign in /Register</button>
+               {!user &&  <button className="headerBtn">Sign in /Register</button>}
                 <div className="headerSearch">
                     <div className="headerSearchItem">
                         <FontAwesomeIcon icon={faBed} className="headerIcon" />
@@ -82,12 +93,12 @@ const Header = ({type}) => {
                     </div>
                     <div className="headerSearchItem">
                         <FontAwesomeIcon icon={faCalendarDay} className="headerIcon" />
-                        <span onClick={() => setOpenDate(!openDate)} className="headerSearchText">{`${format(date[0].startDate, 'MM/dd/yyyy')} to ${format(date[0].endDate, 'MM/dd/yyyy')}`}</span>
-                        {openDate && <DateRange
+                        <span onClick={() => setOpenDates(!openDates)} className="headerSearchText">{`${format(dates[0].startDate, 'MM/dd/yyyy')} to ${format(dates[0].endDate, 'MM/dd/yyyy')}`}</span>
+                        {openDates && <DateRange
                             editableDateInputs={true}
-                            onChange={item => setDate([item.selection])}
+                            onChange={item => setDates([item.selection])}
                             moveRangeOnFirstSelection={false}
-                            ranges={date}
+                            ranges={dates}
                             className="date"
                         />
                         }
